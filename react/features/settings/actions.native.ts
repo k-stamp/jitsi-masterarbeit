@@ -5,8 +5,15 @@ import { isTokenAuthEnabled } from '../authentication/functions';
 import { hangup } from '../base/connection/actions.native';
 import { openDialog } from '../base/dialog/actions';
 
+import { TOGGLE_MIC_INDICATORS_VISIBILITY } from './actionTypes';
 import LogoutDialog from './components/native/LogoutDialog';
 
+
+export function toggleMicIndicatorsVisibility() {
+    return {
+        type: TOGGLE_MIC_INDICATORS_VISIBILITY
+    };
+}
 
 /**
  * Opens {@code LogoutDialog}.

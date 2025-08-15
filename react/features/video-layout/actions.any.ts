@@ -3,6 +3,7 @@ import { isTileViewModeDisabled } from '../filmstrip/functions.any';
 
 import {
     SET_TILE_VIEW,
+    TOGGLE_SPATIAL_AUDIO,
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from './actionTypes';
 import { shouldDisplayTileView } from './functions';
@@ -56,5 +57,23 @@ export function toggleTileView() {
         const tileViewActive = shouldDisplayTileView(getState());
 
         dispatch(setTileView(!tileViewActive));
+    };
+}
+
+
+export function toggleSpatialAudio() {
+    const spatialState = !(window as any).spatialAudio;
+    (window as any).spatialAudio = spatialState;
+    console.warn(`toggleSpatialAudio: ${(window as any).spatialAudio}`);
+
+    const notificationProps = {
+        titleArguments: { state: spatialState ? 'enabled' : 'disabled' },
+        titleKey: 'notify.spatialAudio'
+    };
+    
+
+    return {
+        type: TOGGLE_SPATIAL_AUDIO,
+        spatialState
     };
 }

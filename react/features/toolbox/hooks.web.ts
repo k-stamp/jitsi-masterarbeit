@@ -23,6 +23,7 @@ import InviteButton from '../invite/components/add-people-dialog/web/InviteButto
 import { registerShortcut, unregisterShortcut } from '../keyboard-shortcuts/actions';
 import { useKeyboardShortcutsButton } from '../keyboard-shortcuts/hooks';
 import NoiseSuppressionButton from '../noise-suppression/components/NoiseSuppressionButton';
+import SoundButton from './components/web/SoundButton';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
@@ -46,7 +47,9 @@ import { isScreenAudioSupported, isScreenVideoShared } from '../screen-share/fun
 import { useSecurityDialogButton } from '../security/hooks.web';
 import SettingsButton from '../settings/components/web/SettingsButton';
 import { useSharedVideoButton } from '../shared-video/hooks';
+import ToggleMicIndicatorsButton from './components/web/ToggleMicIndicatorsButton';
 import SpeakerStats from '../speaker-stats/components/web/SpeakerStats';
+import SpeakerHighlightButton from './components/web/SpeakerHighlightButton';
 import { isSpeakerStatsDisabled } from '../speaker-stats/functions';
 import { useSpeakerStatsButton } from '../speaker-stats/hooks.web';
 import { useClosedCaptionButton } from '../subtitles/hooks.web';
@@ -57,6 +60,7 @@ import VideoQualityButton from '../video-quality/components/VideoQualityButton.w
 import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.web';
 import { useVirtualBackgroundButton } from '../virtual-background/hooks';
 import { useWhiteboardButton } from '../whiteboard/hooks';
+import KickEveryoneButton from '../video-menu/components/web/KickEveryoneButton';
 
 import { setFullScreen } from './actions.web';
 import DownloadButton from './components/DownloadButton';
@@ -67,6 +71,8 @@ import FullscreenButton from './components/web/FullscreenButton';
 import LinkToSalesforceButton from './components/web/LinkToSalesforceButton';
 import ProfileButton from './components/web/ProfileButton';
 import ShareDesktopButton from './components/web/ShareDesktopButton';
+import SpatialAudioDebugButton from './components/web/SpatialAudioDebugButton';
+
 import ToggleCameraButton from './components/web/ToggleCameraButton';
 import VideoSettingsButton from './components/web/VideoSettingsButton';
 import { isButtonEnabled, isDesktopShareButtonDisabled } from './functions.web';
@@ -154,6 +160,18 @@ const noiseSuppression = {
     group: 3
 };
 
+const sound = {
+    key: 'sound',
+    Content: SoundButton,
+    group: 3
+};
+
+const spatialAudioDebug = {
+    key: 'spatialaudio-debug',
+    Content: SpatialAudioDebugButton,
+    group: 3
+};
+
 const settings = {
     key: 'settings',
     Content: SettingsButton,
@@ -171,6 +189,14 @@ const help = {
     Content: HelpButton,
     group: 4
 };
+
+const speakerHighlight = {
+    key: 'speaker-highlight',
+    Content: SpeakerHighlightButton,
+    group: 3
+};
+
+
 
 /**
  * A hook that returns the toggle camera button if it is enabled and undefined otherwise.
@@ -262,6 +288,15 @@ function useHelpButton() {
     }
 }
 
+
+function useToggleMicIndicatorsButton() {
+    return {
+        key: 'toggle-mic-indicators',
+        Content: ToggleMicIndicatorsButton,
+        group: 3
+    };
+}
+
 /**
 * Returns all buttons that could be rendered.
 *
@@ -292,39 +327,52 @@ export function useToolboxButtons(
     const feedback = useFeedbackButton();
     const _download = useDownloadButton();
     const _help = useHelpButton();
+    const toggleMicIndicators = useToggleMicIndicatorsButton();
+    const noiseSuppression = { key: 'noisesuppression', Content: NoiseSuppressionButton, group: 3 };
+
+    const kickEveryone = {
+        key: 'kick-everyone',
+        Content: KickEveryoneButton,
+        group: 3
+    };
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
         microphone,
         camera,
         profile,
-        desktop: desktopSharing,
-        chat,
-        raisehand,
-        reactions,
+        // desktop: desktopSharing,
+        // chat,
+        // raisehand,
+        // reactions,
         'participants-pane': participants,
-        invite,
+        // invite,
         tileview,
         'toggle-camera': toggleCameraButton,
+        'toggle-mic-indicators': toggleMicIndicators,
         videoquality: videoQuality,
         fullscreen: _fullscreen,
-        security,
-        closedcaptions: cc,
-        recording,
-        livestreaming: liveStreaming,
-        linktosalesforce,
-        sharedvideo: shareVideo,
-        shareaudio,
-        noisesuppression: noiseSuppression,
-        whiteboard,
+        // security,
+        // closedcaptions: cc,
+        // recording,
+        // livestreaming: liveStreaming,
+        // linktosalesforce,
+        // sharedvideo: shareVideo,
+        // shareaudio,
+        // noisesuppression: noiseSuppression,
+        'kick-everyone': kickEveryone,
+        sound,
+        'spatialaudio-debug': spatialAudioDebug,
+        'speaker-highlight': speakerHighlight,
+        // whiteboard,
         etherpad,
-        'select-background': virtualBackground,
-        stats: speakerStats,
+        // 'select-background': virtualBackground,
+        // stats: speakerStats,
         settings,
-        shortcuts,
-        embedmeeting: embed,
-        feedback,
-        download: _download,
-        help: _help
+        // shortcuts,
+        // embedmeeting: embed,
+        // feedback,
+        download: _download
+        // help: _help
     };
     const buttonKeys = Object.keys(buttons) as ToolbarButton[];
 

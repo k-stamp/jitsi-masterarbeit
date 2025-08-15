@@ -24,7 +24,8 @@ import virtualBackgroundLogger from '../virtual-background/logger';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
-    SET_VIDEO_SETTINGS_VISIBILITY
+    SET_VIDEO_SETTINGS_VISIBILITY,
+    TOGGLE_MIC_INDICATORS_VISIBILITY
 } from './actionTypes';
 import LogoutDialog from './components/web/LogoutDialog';
 import SettingsDialog from './components/web/SettingsDialog';
@@ -36,6 +37,13 @@ import {
     getShortcutsTabProps
 } from './functions.web';
 
+
+
+export function toggleMicIndicatorsVisibility() {
+    return {
+        type: TOGGLE_MIC_INDICATORS_VISIBILITY
+    };
+}
 
 /**
  * Opens {@code LogoutDialog}.
