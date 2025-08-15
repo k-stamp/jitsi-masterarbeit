@@ -65,6 +65,8 @@ const {
     IconNoiseSuppressionOn,
     IconArrowRight,
     IconOffice365,
+    IconOrbit,
+    IconOrbitAlt,
     IconPerformance,
     IconPhoneRinging,
     IconPin,
@@ -92,6 +94,7 @@ const {
     IconShortcuts,
     IconSip,
     IconSites,
+    IconSpeakerHighlight,
     IconStop,
     IconSubtitles,
     IconTileView,
@@ -184,6 +187,8 @@ export {
     IconNoiseSuppressionOn,
     IconArrowRight,
     IconOffice365,
+    IconOrbit,
+    IconOrbitAlt,
     IconPerformance,
     IconPhoneRinging,
     IconPin,
@@ -211,6 +216,7 @@ export {
     IconShortcuts,
     IconSip,
     IconSites,
+    IconSpeakerHighlight,
     IconStop,
     IconSubtitles,
     IconTileView,
@@ -231,3 +237,5 @@ export {
     IconWifi3Bars,
     IconYahoo
 };
+
+

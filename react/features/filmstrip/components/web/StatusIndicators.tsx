@@ -89,7 +89,7 @@ class StatusIndicators extends Component<IProps> {
  *     _showModeratorIndicator: boolean,
  *     _showScreenShareIndicator: boolean
  * }}
-*/
+ */
 function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { participantID, audio, moderator, screenshare } = ownProps;
 
@@ -111,9 +111,10 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     }
 
     const { disableModeratorIndicator } = state['features/base/config'];
+    const micIndicatorsVisible = state['features/settings'].micIndicatorsVisible ?? false;
 
     return {
-        _showAudioMutedIndicator: isAudioMuted && audio,
+        _showAudioMutedIndicator: isAudioMuted && audio && micIndicatorsVisible,
         _showModeratorIndicator:
             !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR && moderator,
         _showScreenShareIndicator: isScreenSharing && screenshare

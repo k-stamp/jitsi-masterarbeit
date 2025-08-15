@@ -422,9 +422,10 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
         && participant?.role === PARTICIPANT_ROLE.MODERATOR;
     const { gifUrl: gifSrc } = getGifForParticipant(state, id ?? '');
     const mode = getGifDisplayMode(state);
+    const micIndicatorsVisible = state['features/settings'].micIndicatorsVisible ?? false;
 
     return {
-        _audioMuted: audioTrack?.muted ?? true,
+        _audioMuted: (audioTrack?.muted ?? true) && micIndicatorsVisible,
         _fakeParticipant: participant?.fakeParticipant,
         _gifSrc: mode === 'chat' ? undefined : gifSrc,
         _isScreenShare: isScreenShare,

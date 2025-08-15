@@ -10,7 +10,7 @@ import { rejectParticipantAudio, rejectParticipantVideo, showModeratedNotificati
 import { shouldShowModeratedNotification } from '../av-moderation/functions';
 import { setAudioMuted, setVideoMuted } from '../base/media/actions';
 import { MEDIA_TYPE, MediaType, VIDEO_MUTISM_AUTHORITY } from '../base/media/constants';
-import { muteRemoteParticipant } from '../base/participants/actions';
+import { muteRemoteParticipant, kickParticipant } from '../base/participants/actions';
 import { getRemoteParticipants } from '../base/participants/functions';
 import { toggleScreensharing } from '../base/tracks/actions';
 import { isModerationNotificationDisplayed } from '../notifications/functions';
@@ -99,6 +99,19 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MediaType
                 dispatch(rejectParticipantAudio(id));
             } else {
                 dispatch(rejectParticipantVideo(id));
+            }
+        });
+    };
+}
+
+
+export function kickAllParticipants() {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const state = getState();
+
+        getRemoteParticipants(state).forEach((p, id) => {
+            if (!p.fakeParticipant) {
+                dispatch(kickParticipant(id));
             }
         });
     };

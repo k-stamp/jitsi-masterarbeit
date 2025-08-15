@@ -30,6 +30,7 @@ export type ToolbarButton = 'camera' |
     'help' |
     'highlight' |
     'invite' |
+    'kick-everyone' |
     'linktosalesforce' |
     'livestreaming' |
     'microphone' |
@@ -46,11 +47,16 @@ export type ToolbarButton = 'camera' |
     'select-background' |
     'settings' |
     'shareaudio' |
+    'sound' |
+    'spatialaudio-debug' |
     'sharedvideo' |
     'shortcuts' |
+    'spatialaudio' |
+    'speaker-highlight' |
     'stats' |
     'tileview' |
     'toggle-camera' |
+    'toggle-mic-indicators' |
     'videoquality' |
     'whiteboard' |
     '__end';

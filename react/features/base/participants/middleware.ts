@@ -25,6 +25,7 @@ import { forEachConference, getCurrentConference } from '../conference/functions
 import { IJitsiConference } from '../conference/reducer';
 import { SET_CONFIG } from '../config/actionTypes';
 import { getDisableRemoveRaisedHandOnFocus } from '../config/functions.any';
+import { getHideSelfView } from '../settings/functions.any';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media/constants';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
@@ -83,6 +84,10 @@ import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 import { IJitsiParticipant } from './types';
 
 import './subscriber';
+import { getNotResponsiveTileViewGridDimensions } from '../../video-layout/functions.web';
+import { getCurrentLayout } from '../../video-layout/functions.web';
+import { LAYOUTS } from '../../video-layout/constants';
+import { getNumberOfPartipantsForTileView } from '../../filmstrip/functions.web';
 
 /**
  * Middleware that captures CONFERENCE_JOINED and CONFERENCE_LEFT actions and
@@ -280,7 +285,11 @@ MiddlewareRegistry.register(store => next => action => {
             && !isWhiteboardParticipant(action.participant)
         ) && _maybePlaySounds(store, action);
 
-        return _participantJoinedOrUpdated(store, next, action);
+        const result = _participantJoinedOrUpdated(store, next, action);
+        
+        _logGridLayout(store);
+        
+        return result;
     }
 
     case PARTICIPANT_LEFT: {
@@ -289,7 +298,11 @@ MiddlewareRegistry.register(store => next => action => {
             && !isWhiteboardParticipant(action.participant)
         ) && _maybePlaySounds(store, action);
 
-        break;
+        const result = next(action);
+        
+        _logGridLayout(store);
+        
+        return result;
     }
 
     case PARTICIPANT_UPDATED:
@@ -882,4 +895,78 @@ function _registerSounds({ dispatch }: IStore) {
 function _unregisterSounds({ dispatch }: IStore) {
     dispatch(unregisterSound(PARTICIPANT_JOINED_SOUND_ID));
     dispatch(unregisterSound(PARTICIPANT_LEFT_SOUND_ID));
+}
+
+
+function _logGridLayout(store: IStore) {
+    const { getState } = store;
+    const state = getState();
+    
+    const totalParticipantCount = getParticipantCount(state);
+    if (totalParticipantCount <= 1) {
+        return;
+    }
+
+    try {
+        const numberOfParticipantsForTileView = getNumberOfPartipantsForTileView(state);
+        
+        if (numberOfParticipantsForTileView <= 0) {
+            console.log('Grid Layout: No participants to display');
+            return;
+        }
+
+        const { columns, rows } = getNotResponsiveTileViewGridDimensions(state);
+        
+        const remoteParticipants = getRemoteParticipants(state);
+        const localParticipant = getLocalParticipant(state);
+        const hideSelfView = getHideSelfView(state);
+        
+        const allParticipants: Array<{ id: string; name: string; }> = [];
+        
+        if (localParticipant && !hideSelfView) {
+            allParticipants.push({
+                id: localParticipant.id,
+                name: getParticipantDisplayName(state, localParticipant.id)
+            });
+        }
+        
+        for (const [id] of remoteParticipants) {
+            const participant = getParticipantById(state, id);
+            if (participant && !isScreenShareParticipant(participant) && !isWhiteboardParticipant(participant)) {
+                allParticipants.push({
+                    id,
+                    name: getParticipantDisplayName(state, id)
+                });
+            }
+        }
+
+        if (allParticipants.length === 0) {
+            console.log('Grid Layout: No participants to display');
+            return;
+        }
+
+        let logOutput = `\n=== Spatial GRID LAYOUT ===\n`;
+        logOutput += `Rows: ${rows}\n`;
+        logOutput += `Columns: ${columns}\n`;
+        
+        for (let row = 0; row < rows; row++) {
+            const rowParticipants: string[] = [];
+            for (let col = 0; col < columns; col++) {
+                const participantIndex = (row * columns) + col;
+                if (participantIndex < allParticipants.length) {
+                    rowParticipants.push(allParticipants[participantIndex].name);
+                }
+            }
+            
+            if (rowParticipants.length > 0) {
+                logOutput += `Row ${row + 1}: [${rowParticipants.join(', ')}]\n`;
+            }
+        }
+        
+        logOutput += `==================\n`;
+        console.log(logOutput);
+        
+    } catch (error) {
+        logger.error('Error logging grid layout:', error);
+    }
 }
